@@ -1,0 +1,39 @@
+# Environment variables / Secrets (CRITICAL: Contains private API keys)
+.env
+.env.*
+
+# Python virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python caching
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+
+# Jupyter Notebook checkpoints and output files
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
+
+# Vector Store / Local DB directories
+data/vector_store/
+
+# OS-specific files
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+
+# IDE configuration
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
