@@ -18,17 +18,32 @@
     <script src="/static/app.js" defer></script>
 </head>
 <body>
+    <!-- Top Site Header (flex.com style) -->
+    <header class="site-header">
+        <div class="site-header-container">
+            <div class="logo-area">
+                <img src="/static/logo.png" alt="Flex Logo" class="flex-logo-img" style="height: 28px; width: auto; display: block; filter: brightness(0) invert(1);">
+                <span class="logo-rag-badge">RAG</span>
+            </div>
+            
+            <nav class="site-nav">
+                <a href="https://flex.com/solutions" target="_blank">Solutions</a>
+                <a href="https://flex.com/capabilities" target="_blank">Capabilities</a>
+                <a href="https://flex.com/industries" target="_blank">Industries</a>
+                <a href="https://flex.com/careers" target="_blank">Careers</a>
+                <a href="https://flex.com/company" target="_blank">Company</a>
+            </nav>
+            
+            <div class="header-actions">
+                <a href="https://flex.com/contact" target="_blank" class="contact-btn">Contact Us</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace Container -->
     <div class="app-container">
         <!-- Sidebar Navigation -->
         <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="logo-area">
-                    <i class="fa-solid fa-cube logo-icon"></i>
-                    <span>Flex RAG</span>
-                </div>
-                <div class="subtitle">Policy Assistant</div>
-            </div>
-
             <!-- Vector Store Database Panel -->
             <div class="sidebar-section">
                 <h3><i class="fa-solid fa-database"></i> Knowledge Base</h3>
@@ -50,8 +65,8 @@
                 </div>
             </div>
 
-            <!-- Parameters Slider Controls -->
-            <div class="sidebar-section flex-grow">
+            <!-- Parameters Slider Controls (Hidden per user request, kept in DOM for JS safety) -->
+            <div class="sidebar-section flex-grow" style="display: none;">
                 <h3><i class="fa-solid fa-sliders"></i> LLM Configuration</h3>
                 
                 <div class="control-group">
@@ -171,5 +186,23 @@
             </footer>
         </main>
     </div>
+
+    <!-- Bottom Site Footer (flex.com style) -->
+    <footer class="site-footer">
+        <div class="site-footer-container">
+            <div class="footer-left">
+                <span>© 2026 Flex Inc. All rights reserved.</span>
+            </div>
+            <div class="footer-right">
+                <a href="https://flex.com/supplier-information" target="_blank">Supplier Portal</a>
+                <span class="divider">|</span>
+                <a href="https://flex.com/privacy-policy" target="_blank">Privacy Policy</a>
+                <span class="divider">|</span>
+                <a href="https://flex.com/terms-of-use" target="_blank">Terms of Use</a>
+                <span class="divider">|</span>
+                <a href="https://flex.com/contact" target="_blank">Contact</a>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
