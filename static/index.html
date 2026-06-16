@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flex Policies RAG Chatbot</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Marked.js (Markdown parser) -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Custom CSS Stylesheet -->
+    <link rel="stylesheet" href="/static/style.css">
+    <!-- Custom JS Controller -->
+    <script src="/static/app.js" defer></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-area">
+                    <i class="fa-solid fa-cube logo-icon"></i>
+                    <span>Flex RAG</span>
+                </div>
+                <div class="subtitle">Policy Assistant</div>
+            </div>
+
+            <!-- Vector Store Database Panel -->
+            <div class="sidebar-section">
+                <h3><i class="fa-solid fa-database"></i> Knowledge Base</h3>
+                <div class="kb-card">
+                    <div class="kb-item">
+                        <span class="label">Collection:</span>
+                        <span class="value" id="db-collection">pdf_documents</span>
+                    </div>
+                    <div class="kb-item">
+                        <span class="label">Chunks:</span>
+                        <span class="value badge" id="db-chunks">-</span>
+                    </div>
+                    <div class="kb-item folder-structure">
+                        <span class="label">Indexed Policies:</span>
+                        <ul class="file-list" id="db-files">
+                            <li class="loading-item">Loading database stats...</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parameters Slider Controls -->
+            <div class="sidebar-section flex-grow">
+                <h3><i class="fa-solid fa-sliders"></i> LLM Configuration</h3>
+                
+                <div class="control-group">
+                    <label for="model-select">LLM Model</label>
+                    <select id="model-select" class="custom-select">
+                        <option value="llama-3.1-8b-instant" selected>llama-3.1-8b-instant</option>
+                        <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile</option>
+                        <option value="llama3-8b-8192">llama3-8b-8192</option>
+                        <option value="gemma2-9b-it">gemma2-9b-it</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <div class="slider-header">
+                        <label for="temp-slider">Temperature</label>
+                        <span class="slider-val" id="temp-val">0.1</span>
+                    </div>
+                    <input type="range" id="temp-slider" min="0" max="1" step="0.05" value="0.1" class="custom-slider">
+                </div>
+
+                <div class="control-group">
+                    <div class="slider-header">
+                        <label for="topk-slider">Top K retrieved chunks</label>
+                        <span class="slider-val" id="topk-val">3</span>
+                    </div>
+                    <input type="range" id="topk-slider" min="1" max="10" step="1" value="3" class="custom-slider">
+                </div>
+
+                <div class="control-group">
+                    <div class="slider-header">
+                        <label for="threshold-slider">Score Threshold</label>
+                        <span class="slider-val" id="threshold-val">0.00</span>
+                    </div>
+                    <input type="range" id="threshold-slider" min="0" max="1" step="0.05" value="0.00" class="custom-slider">
+                </div>
+            </div>
+
+            <!-- Action Controls at Bottom -->
+            <div class="sidebar-actions">
+                <button id="clear-chat" class="btn btn-secondary">
+                    <i class="fa-solid fa-trash-can"></i> Clear History
+                </button>
+                <div class="server-status">
+                    <span class="status-indicator online"></span>
+                    <span class="status-text">Server: Online</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="chat-container">
+            <!-- Header bar -->
+            <header class="chat-header">
+                <div class="header-left">
+                    <h2>Chat with Policy Documents</h2>
+                    <span class="model-badge" id="active-model-badge">llama-3.1-8b-instant</span>
+                </div>
+                <div class="header-right">
+                    <button id="refresh-db" class="btn-icon" title="Refresh Database Stats">
+                        <i class="fa-solid fa-arrows-rotate"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Chat Message List (Empty by default) -->
+            <div class="chat-messages" id="chat-messages">
+                <!-- Welcome / Onboarding Screen -->
+                <div class="welcome-screen" id="welcome-screen">
+                    <div class="welcome-icon">
+                        <i class="fa-solid fa-comments-question"></i>
+                    </div>
+                    <h2>Welcome to the Flex Policies RAG Assistant</h2>
+                    <p>Ask questions about Flex internal policies, supplier rules, guidelines, code of conduct, and human rights specifications.</p>
+                    
+                    <div class="suggestions-area">
+                        <h3>Frequently Asked Questions</h3>
+                        <div class="suggestions-grid">
+                            <button class="suggestion-chip" data-prompt="What is the Flex Anti-Corruption Policy?">
+                                <span class="chip-title">Anti-Corruption Policy</span>
+                                <span class="chip-desc">What rules apply to third-party representatives?</span>
+                            </button>
+                            <button class="suggestion-chip" data-prompt="What about working Hours in Flex?">
+                                <span class="chip-title">Working Hours Limit</span>
+                                <span class="chip-desc">How many hours per week are employees allowed to work?</span>
+                            </button>
+                            <button class="suggestion-chip" data-prompt="What environmental standards must suppliers meet?">
+                                <span class="chip-title">Supplier Environment</span>
+                                <span class="chip-desc">What permits and sustainability actions are required?</span>
+                            </button>
+                            <button class="suggestion-chip" data-prompt="Summarize the core components of Flex's Tax Strategy.">
+                                <span class="chip-title">Global Tax Strategy</span>
+                                <span class="chip-desc">What are the five key tax management components?</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Bottom Input Console -->
+            <footer class="chat-input-area">
+                <form id="chat-form" class="chat-form">
+                    <div class="input-wrapper">
+                        <textarea 
+                            id="user-input" 
+                            placeholder="Ask me anything about the corporate policies..." 
+                            rows="1" 
+                            required
+                        ></textarea>
+                        <button type="submit" id="send-btn" class="send-btn" disabled>
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </form>
+                <div class="input-footer-text">
+                    Answers are synthesized based on verified corporate policy documents inside the Chroma database.
+                </div>
+            </footer>
+        </main>
+    </div>
+</body>
+</html>
