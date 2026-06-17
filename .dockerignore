@@ -1,0 +1,14 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+.git/
+.gitignore
+notebook/
+.ipynb_checkpoints/
+*.ipynb
+uv.lock
+.python-version
+.env
+TECHNICAL.md
+test_pipeline.py
